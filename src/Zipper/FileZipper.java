@@ -1,7 +1,10 @@
 package Zipper;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 public class FileZipper extends JFrame
@@ -11,7 +14,29 @@ public class FileZipper extends JFrame
     private JButton bRemove;
     private JButton bZip;
     private JMenuBar topMenu = new JMenuBar();
-    private DefaultListModel listModel = new DefaultListModel();
+    private DefaultListModel listModel = new DefaultListModel()
+   {
+       ArrayList arrayList = new ArrayList();
+       
+       @Override
+       public void addElement(Object obj) 
+       {
+           arrayList.add(obj);
+           super.addElement(obj);
+       }
+        @Override
+        public Object get(int index) 
+        {
+            return arrayList.get(index);
+        }
+        @Override
+        public Object remove(int index)
+        {
+            arrayList.remove(index);
+            return super.remove(index);
+        }
+       
+    };
     private JList list = new JList(listModel);
     private JFileChooser chooser = new JFileChooser();
     
@@ -51,6 +76,7 @@ public class FileZipper extends JFrame
             JMenuItem addMenuItem = fileMenu.add(adding);
             JMenuItem removeMenuItem = fileMenu.add(removing);
             JMenuItem zipMenuItem = fileMenu.add(zipping);
+            
         
         //layout
         GroupLayout myLayout = new GroupLayout(this.getContentPane());
@@ -91,6 +117,7 @@ public class FileZipper extends JFrame
             this.putValue(Action.SHORT_DESCRIPTION, opis);
             this.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(shortcut));
         }
+        
          public MyAction(String name, String opis, String shortcut, Icon ico)
         {
             this(name,opis,shortcut);
@@ -98,15 +125,23 @@ public class FileZipper extends JFrame
             this.putValue(Action.SMALL_ICON, ico);
         }
 
+
         @Override
         public void actionPerformed(ActionEvent e) 
         {
-            if(e.getActionCommand().equals("Add"))
-                addToZip();
-            else if(e.getActionCommand().equals("Remove"))
-                System.out.println("Removing");
-            else
-                System.out.println("Zipping");
+            switch (e.getActionCommand()) {
+                case "Add":
+                    addToZip();
+                    break;
+                case "Remove":
+                    removeFromZip();
+                    break;
+                case "Zip":
+                    System.out.println("sd");//zipping();
+                    break;
+                default:
+                    break;
+            }
         }
         private void addToZip()
         {
@@ -117,10 +152,29 @@ public class FileZipper extends JFrame
             if(choose == JFileChooser.APPROVE_OPTION)
             {
                 File[] choosedFiles = chooser.getSelectedFiles();
-                for(File file: choosedFiles)
-                    listModel.addElement(file.getAbsolutePath());
+                for (File file : choosedFiles) {
+                    if (!isElementAlreadyInZip(file.getPath())) {
+                        listModel.addElement(file.getPath());
+                    }
+                }
             }
             
+        }
+        private boolean isElementAlreadyInZip(String element)
+        {
+            for(int i = 0; i < listModel.getSize(); i++)
+            {
+                if((listModel.get(i)).equals(element))
+                    return true;
+            }
+            return false;
+        }
+        
+        private void removeFromZip()
+        {
+            int[] indexy = list.getSelectedIndices();
+                for(int i=0; i < indexy.length; i++)
+                    listModel.remove(indexy[i]-i);
         }
     }
 
