@@ -1,7 +1,7 @@
 package Zipper;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -61,7 +61,7 @@ public class FileZipper extends JFrame
         Action adding = new MyAction("Add", "Add to zipper", "ctrl A" /*new ImageIcon("add.png")*/);
         Action removing = new MyAction("Remove", "Remove from zipper", "ctrl R");
         Action zipping = new MyAction("Zip", "Zip!", "ctrl Z");
-        
+        Action about = new MyAction("See About");
         //buttons
         bAdd = new JButton(adding);
         bRemove = new JButton(removing);
@@ -76,6 +76,9 @@ public class FileZipper extends JFrame
             JMenuItem addMenuItem = fileMenu.add(adding);
             JMenuItem removeMenuItem = fileMenu.add(removing);
             JMenuItem zipMenuItem = fileMenu.add(zipping);
+        JMenu aboutMenu = topMenu.add(new JMenu("About"));
+            JMenuItem seeAboutItem = aboutMenu.add(about);
+        
             
         
         //layout
@@ -124,6 +127,10 @@ public class FileZipper extends JFrame
             //z dodaniem ikony
             this.putValue(Action.SMALL_ICON, ico);
         }
+        public MyAction(String nazwa)
+        {
+            this.putValue(Action.NAME, nazwa);
+        }
 
 
         @Override
@@ -139,6 +146,8 @@ public class FileZipper extends JFrame
                 case "Zip":
                     System.out.println("sd");//zipping();
                     break;
+                case "See About":
+                    getDesc();
                 default:
                     break;
             }
@@ -175,6 +184,25 @@ public class FileZipper extends JFrame
             int[] indexy = list.getSelectedIndices();
                 for(int i=0; i < indexy.length; i++)
                     listModel.remove(indexy[i]-i);
+        }
+        private void getDesc()
+        {
+            JDialog aboutDialog = new JDialog();
+            aboutDialog.setVisible(true);
+            aboutDialog.setTitle("About");
+            JPanel dialogPanel = new JPanel();
+            aboutDialog.getContentPane().add(dialogPanel);
+            JLabel opis = new JLabel("<html> <p>Hi Everyone!</p> <p>This is my very first"
+                                    + " app in Java with Swing</p> <p>I am glad to see you there :)</p></html",SwingConstants.CENTER);
+            opis.setFont(new Font("Courier New", Font.PLAIN, 12));
+            dialogPanel.add(opis);
+            
+            //setting components 
+            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+            int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+            aboutDialog.setBounds(screenWidth/2 - 200, screenHeight/2 - 150, 400, 250);
+            aboutDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            
         }
     }
 
