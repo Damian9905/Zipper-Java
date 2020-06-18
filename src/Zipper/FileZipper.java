@@ -11,8 +11,10 @@ public class FileZipper extends JFrame
     private JButton bRemove;
     private JButton bZip;
     private JMenuBar topMenu = new JMenuBar();
-    private JList list = new JList();
+    private DefaultListModel listModel = new DefaultListModel();
+    private JList list = new JList(listModel);
     private JFileChooser chooser = new JFileChooser();
+    
     
     //constructors
     public FileZipper()
@@ -39,6 +41,7 @@ public class FileZipper extends JFrame
         bAdd = new JButton(adding);
         bRemove = new JButton(removing);
         bZip= new JButton(zipping);
+        JScrollPane scroll = new JScrollPane(list);
         
         list.setBorder(BorderFactory.createEtchedBorder());
         
@@ -57,7 +60,7 @@ public class FileZipper extends JFrame
         
         myLayout.setHorizontalGroup(
                 myLayout.createSequentialGroup()
-                .addComponent(list, 100, 150, Short.MAX_VALUE)
+                .addComponent(scroll, 100, 150, Short.MAX_VALUE)
                 .addGroup(
                         myLayout.createParallelGroup()
                         .addComponent(bAdd)
@@ -67,7 +70,7 @@ public class FileZipper extends JFrame
         );
         myLayout.setVerticalGroup(
                 myLayout.createParallelGroup()
-                .addComponent(list, 100, 150, Short.MAX_VALUE)
+                .addComponent(scroll, 100, 150, Short.MAX_VALUE)
                 .addGroup(
                         myLayout.createSequentialGroup()
                         .addComponent(bAdd)
@@ -108,7 +111,16 @@ public class FileZipper extends JFrame
         private void addToZip()
         {
             chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-            chooser.showDialog(rootPane, "Add to zip");
+            chooser.setMultiSelectionEnabled(true);
+            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            int choose = chooser.showDialog(rootPane, "Add to zip");
+            if(choose == JFileChooser.APPROVE_OPTION)
+            {
+                File[] choosedFiles = chooser.getSelectedFiles();
+                for(File file: choosedFiles)
+                    listModel.addElement(file.getAbsolutePath());
+            }
+            
         }
     }
 
